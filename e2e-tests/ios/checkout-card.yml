@@ -1,0 +1,29 @@
+#NOTICE: May not work properly with Android 13
+appId: ${APP_ID}
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "checkout"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "Success" # initBluesnap Success
+    timeout: 20000      # Timeout in milliseconds
+- tapOn: "cardNumber"
+- inputText: "4000000000002701"
+- tapOn: "month"
+- inputText: "12"
+- tapOn: "year"
+- inputText: "29"
+- tapOn: "cvv"
+- inputText: "123"
+- tapOn: "name"
+- inputText: "test user"
+- tapOn: "billingZip"
+- inputText: "700000"
+- tapOn: "/ checkout card" #- hideKeyboard => On iOS, hideKeyboard can be flaky.
+- tapOn: "checkout card"
+- extendedWaitUntil:
+    visible: ".*\"billingDetails\".*" # #Payment success with data (regEx)
+    timeout: 20000      # Timeout in milliseconds
+
+# command: maestro test e2e-tests/ios/checkout-card.yml -e APP_ID=org.reactjs.native.example.BluesnapSdkReactNativeExample

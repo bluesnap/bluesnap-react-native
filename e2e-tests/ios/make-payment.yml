@@ -1,0 +1,38 @@
+appId: ${APP_ID}
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "checkout"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "Success" # initBluesnap Success
+    timeout: 20000      # Timeout in milliseconds
+- tapOn: "checkout"
+- assertVisible: "Payment Type"
+- tapOn:
+    id: "CcButton"
+- assertVisible: "Payment"
+- tapOn:
+    id: "CCN"
+- inputText: "4000000000002701"
+- assertVisible:
+    id: "ExpTextField"
+- inputText: "1225"
+- assertVisible:
+    id: "CvvTextField"
+- inputText: "123"
+- tapOn:
+    id: "Name"
+- inputText: "test user"
+- tapOn:
+    id: "Zip"
+- inputText: "700000"
+- tapOn: #- hideKeyboard => On iOS, hideKeyboard can be flaky.
+    point: "50%,41%"
+- tapOn:
+    id: "PayButton"
+- extendedWaitUntil:
+    visible: ".*\"billingDetails\".*" # #Payment success with data (regEx)
+    timeout: 20000      # Timeout in milliseconds
+
+# command: maestro test e2e-tests/ios/make-payment.yml -e APP_ID=org.reactjs.native.example.BluesnapSdkReactNativeExample

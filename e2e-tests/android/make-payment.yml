@@ -1,0 +1,38 @@
+#NOTICE: May not work properly with Android 13
+appId: ${APP_ID}
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "CHECKOUT"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "Success" # initBluesnap Success
+    timeout: 20000      # Timeout in milliseconds
+- tapOn: "CHECKOUT"
+- assertVisible: "Payment Type"
+- tapOn:
+    id: "com.bluesnapsdkreactnativeexample:id/newCardButton"
+- assertVisible: "Payment"
+- tapOn:
+    id: "com.bluesnapsdkreactnativeexample:id/creditCardNumberEditText"
+- inputText: "4000000000002701"
+- assertVisible:
+    id: "com.bluesnapsdkreactnativeexample:id/expEditText"
+- inputText: "1225"
+- assertVisible:
+    id: "com.bluesnapsdkreactnativeexample:id/cvvEditText"
+- inputText: "123"
+- tapOn:
+    id: "com.bluesnapsdkreactnativeexample:id/input_name"
+- inputText: "ab c"
+- tapOn:
+    id: "com.bluesnapsdkreactnativeexample:id/input_zip"
+- inputText: "700000"
+- hideKeyboard
+- tapOn:
+    id: "com.bluesnapsdkreactnativeexample:id/buyNowButton"
+- extendedWaitUntil:
+    visible: ".*\"billingDetails\".*" # #Payment success with data (regEx)
+    timeout: 20000      # Timeout in milliseconds
+
+# command: maestro test e2e-tests/android/make-payment.yml -e APP_ID=com.bluesnapsdkreactnativeexample
