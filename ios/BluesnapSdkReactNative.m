@@ -1,41 +1,55 @@
 #import <React/RCTBridgeModule.h>
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTEventEmitter.h>
 
-@interface RCT_EXTERN_MODULE(BluesnapSdkReactNative, NSObject)
+@interface RCT_EXTERN_MODULE(BluesnapSdkReactNative, RCTEventEmitter)
 
-RCT_EXTERN_METHOD(setSDKRequest: (BOOL)withEmail
-                  withShipping: (BOOL)withShipping
-                  fullBilling: (BOOL)fullBilling
-                  amount: (double)amount
-                  taxAmount: (double)taxAmount
-                  currency: (NSString *)currency
-                  activate3DS: (BOOL)activate3DS
-                )
+RCT_EXTERN_METHOD(initBluesnap:(NSDictionary *)options
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(showCheckout: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject
-                )
+RCT_EXTERN_METHOD(setBsToken:(NSString *)token
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(finalizeToken: (NSString *)token)
+RCT_EXTERN_METHOD(showCheckout:(NSDictionary *)request
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(checkoutCard: (NSDictionary)props
-                  resolve: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject
-                )
+RCT_EXTERN_METHOD(showSubscriptionCheckout:(NSDictionary *)request
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-+ (BOOL)requiresMainQueueSetup
-{
-  return YES;
-}
+RCT_EXTERN_METHOD(showChoosePayment:(NSDictionary *)request
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(initBluesnap: (NSString *)bsToken
-                  initKount: (BOOL)initKount
-                  fraudSessionId: (NSString *)fraudSessionId
-                  applePayMerchantIdentifier: (NSString *)applePayMerchantIdentifier
-                  merchantStoreCurrency: (NSString *)merchantStoreCurrency
-                  resolver: (RCTPromiseResolveBlock)resolve
-                  rejecter: (RCTPromiseRejectBlock)reject
-                )
+RCT_EXTERN_METHOD(showCreatePayment:(NSDictionary *)request
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(submitTokenizedDetails:(NSDictionary *)request
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(authenticate3DS:(NSDictionary *)request
+                  withResolver:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(respondToTaxUpdate:(double)taxAmount)
+
+RCT_EXTERN_METHOD(getSupportedCurrencies:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(applePaySupported:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getCards:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getShopperConfiguration:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getSdkVersion:(RCTPromiseResolveBlock)resolve
+                  withRejecter:(RCTPromiseRejectBlock)reject)
 
 @end

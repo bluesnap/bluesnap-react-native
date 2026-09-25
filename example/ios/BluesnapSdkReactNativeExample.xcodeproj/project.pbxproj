@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* BluesnapSdkReactNativeExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BluesnapSdkReactNativeExampleTests.m */; };
+		0C80B921A6F3F58F76C31292 /* libPods-BluesnapSdkReactNativeExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-BluesnapSdkReactNativeExample.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1568E79032BF707D7DA8BF15 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C254DB17915D222F4B5719 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a */; };
+		7699B88040F8A987B510C191 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		D2D9B3152AB994792D997676 /* libPods-BluesnapSdkReactNativeExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8682C9703A4881D1FBB45F6 /* libPods-BluesnapSdkReactNativeExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,14 +36,14 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BluesnapSdkReactNativeExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = BluesnapSdkReactNativeExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = BluesnapSdkReactNativeExample/main.m; sourceTree = "<group>"; };
-		18AE70C2236C401204F51CB1 /* Pods-BluesnapSdkReactNativeExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample.debug.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample.debug.xcconfig"; sourceTree = "<group>"; };
-		6B3C87B73A79E3958448038D /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		19F6CBCC0A4E27FBF8BF4A61 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B4392A12AC88292D35C810B /* Pods-BluesnapSdkReactNativeExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample.debug.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample.debug.xcconfig"; sourceTree = "<group>"; };
+		5709B34CF0A7D63546082F79 /* Pods-BluesnapSdkReactNativeExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample.release.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample.release.xcconfig"; sourceTree = "<group>"; };
+		5B7EB9410499542E8C5724F5 /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5DCACB8F33CDC322A6C60F78 /* libPods-BluesnapSdkReactNativeExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BluesnapSdkReactNativeExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BluesnapSdkReactNativeExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		9EA90F2A019EEAA791C8EEBD /* Pods-BluesnapSdkReactNativeExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample.release.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample.release.xcconfig"; sourceTree = "<group>"; };
-		C8682C9703A4881D1FBB45F6 /* libPods-BluesnapSdkReactNativeExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BluesnapSdkReactNativeExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E4C254DB17915D222F4B5719 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		89C6BE57DB24E9ADA2F236DE /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F9DEF8186D18A1788E7ED25C /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1568E79032BF707D7DA8BF15 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a in Frameworks */,
+				7699B88040F8A987B510C191 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2D9B3152AB994792D997676 /* libPods-BluesnapSdkReactNativeExample.a in Frameworks */,
+				0C80B921A6F3F58F76C31292 /* libPods-BluesnapSdkReactNativeExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,8 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				C8682C9703A4881D1FBB45F6 /* libPods-BluesnapSdkReactNativeExample.a */,
-				E4C254DB17915D222F4B5719 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a */,
+				5DCACB8F33CDC322A6C60F78 /* libPods-BluesnapSdkReactNativeExample.a */,
+				19F6CBCC0A4E27FBF8BF4A61 /* libPods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -140,10 +140,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				18AE70C2236C401204F51CB1 /* Pods-BluesnapSdkReactNativeExample.debug.xcconfig */,
-				9EA90F2A019EEAA791C8EEBD /* Pods-BluesnapSdkReactNativeExample.release.xcconfig */,
-				F9DEF8186D18A1788E7ED25C /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig */,
-				6B3C87B73A79E3958448038D /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig */,
+				3B4392A12AC88292D35C810B /* Pods-BluesnapSdkReactNativeExample.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-BluesnapSdkReactNativeExample.release.xcconfig */,
+				5B7EB9410499542E8C5724F5 /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig */,
+				89C6BE57DB24E9ADA2F236DE /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -155,12 +155,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "BluesnapSdkReactNativeExampleTests" */;
 			buildPhases = (
-				B4F2B0CFD92E6FDD419FC2FE /* [CP] Check Pods Manifest.lock */,
+				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				AEE4CA153EE688911DF4E5D7 /* [CP] Embed Pods Frameworks */,
-				605F7959BC63207730081EAF /* [CP] Copy Pods Resources */,
+				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
+				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -176,14 +176,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "BluesnapSdkReactNativeExample" */;
 			buildPhases = (
-				34DC46A7D4E0EEEB5D1B6338 /* [CP] Check Pods Manifest.lock */,
+				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				82FF92655CFE97525D0659E3 /* [CP] Embed Pods Frameworks */,
-				673C817B8AA89ED67EA735B7 /* [CP] Copy Pods Resources */,
+				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
+				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -252,7 +252,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
@@ -262,11 +262,50 @@
 			name = "Bundle React Native code and images";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		34DC46A7D4E0EEEB5D1B6338 /* [CP] Check Pods Manifest.lock */ = {
+		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -288,58 +327,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		605F7959BC63207730081EAF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		673C817B8AA89ED67EA735B7 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		82FF92655CFE97525D0659E3 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AEE4CA153EE688911DF4E5D7 /* [CP] Embed Pods Frameworks */ = {
+		C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -356,26 +344,38 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B4F2B0CFD92E6FDD419FC2FE /* [CP] Check Pods Manifest.lock */ = {
+		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-checkManifestLockResult.txt",
+				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample/Pods-BluesnapSdkReactNativeExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests/Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -430,7 +430,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F9DEF8186D18A1788E7ED25C /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig */;
+			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -438,7 +438,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = BluesnapSdkReactNativeExampleTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -457,12 +457,12 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6B3C87B73A79E3958448038D /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig */;
+			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-BluesnapSdkReactNativeExample-BluesnapSdkReactNativeExampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = BluesnapSdkReactNativeExampleTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -481,7 +481,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 18AE70C2236C401204F51CB1 /* Pods-BluesnapSdkReactNativeExample.debug.xcconfig */;
+			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-BluesnapSdkReactNativeExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -508,7 +508,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9EA90F2A019EEAA791C8EEBD /* Pods-BluesnapSdkReactNativeExample.release.xcconfig */;
+			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-BluesnapSdkReactNativeExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -564,7 +564,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -580,7 +580,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -592,14 +592,12 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -637,7 +635,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -646,7 +644,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -657,14 +655,12 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

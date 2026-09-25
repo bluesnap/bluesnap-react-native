@@ -1,8 +1,24 @@
-import { NativeModules, Platform, NativeEventEmitter } from 'react-native';
+import {
+  NativeModules,
+  NativeEventEmitter,
+  Platform,
+  type EmitterSubscription,
+} from 'react-native';
 import type {
-  BSBaseSdkResult,
-  // checkoutCardProps
-} from 'types/index.types';
+  ApplePaySupport,
+  BluesnapEventMap,
+  CheckoutRequest,
+  CreditCardInfo,
+  InitOptions,
+  PurchaseResult,
+  ShopperConfiguration,
+  ShopperRequirementsRequest,
+  SubscriptionCheckoutRequest,
+  ThreeDSRequest,
+  TokenizeCardRequest,
+} from './types';
+
+export * from './types';
 
 const LINKING_ERROR =
   `The package 'bluesnap-sdk-react-native' doesn't seem to be linked. Make sure: \n\n` +
@@ -10,7 +26,7 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const BluesnapSdkReactNative = NativeModules.BluesnapSdkReactNative
+const NativeBluesnap = NativeModules.BluesnapSdkReactNative
   ? NativeModules.BluesnapSdkReactNative
   : new Proxy(
       {},
@@ -21,76 +37,121 @@ const BluesnapSdkReactNative = NativeModules.BluesnapSdkReactNative
       }
     );
 
-export const eventEmitter = new NativeEventEmitter(BluesnapSdkReactNative);
+const eventEmitter = new NativeEventEmitter(NativeBluesnap);
 
-export async function initBluesnap(
-  bsTokenString: string,
-  initKount: boolean,
-  fraudSessionId: string,
-  applePayMerchantIdentifier: string,
-  merchantStoreCurrency: string
-): Promise<any> {
-  return await BluesnapSdkReactNative.initBluesnap(
-    bsTokenString,
-    initKount,
-    fraudSessionId,
-    applePayMerchantIdentifier,
-    merchantStoreCurrency
-  );
+/**
+ * Initialize the BlueSnap SDK with a payment-fields token from your server.
+ * Must be called before any checkout or tokenization flow.
+ */
+export function initBluesnap(options: InitOptions): Promise<void> {
+  return NativeBluesnap.initBluesnap(options);
 }
 
-export function setSDKRequest(
-  withEmail: boolean,
-  withShipping: boolean,
-  fullBilling: boolean,
-  amount: number,
-  taxAmount: number,
-  currency: string,
-  activate3DS: boolean
-) {
-  BluesnapSdkReactNative.setSDKRequest(
-    withEmail,
-    withShipping,
-    fullBilling,
-    amount,
-    taxAmount,
-    currency,
-    activate3DS
-  );
+/**
+ * Set a refreshed payment-fields token (also called automatically on token refresh).
+ */
+export function setBsToken(token: string): Promise<void> {
+  return NativeBluesnap.setBsToken(token);
 }
 
-export function finalizeToken(token: string | null) {
-  BluesnapSdkReactNative.finalizeToken(token);
+/**
+ * Start the standard checkout flow (credit card, Apple Pay, PayPal / Google Pay).
+ */
+export function showCheckout(
+  request: CheckoutRequest
+): Promise<PurchaseResult> {
+  return NativeBluesnap.showCheckout(request);
 }
 
-export async function showCheckout(): Promise<BSBaseSdkResult> {
-  return await BluesnapSdkReactNative.showCheckout();
+/**
+ * Start subscription checkout flow.
+ */
+export function showSubscriptionCheckout(
+  request: SubscriptionCheckoutRequest
+): Promise<PurchaseResult> {
+  return NativeBluesnap.showSubscriptionCheckout(request);
 }
 
-export async function checkoutCard(
-  cardNumber: string,
-  /**
-   * Recommended format: MM/YY
-   */
-  expirationDate: string,
-  cvv: string,
-  name: string,
-  billingZip: string,
-  email?: string
-): Promise<BSBaseSdkResult> {
-  return await BluesnapSdkReactNative.checkoutCard({
-    cardNumber,
-    expirationDate,
-    cvv,
-    name,
-    billingZip,
-    isStoreCard: false, // isStoreCard should be set to false always
-    email,
-  });
+/**
+ * Configure shopper payment preferences (returning shopper onboarding).
+ */
+export function showChoosePayment(
+  request: ShopperRequirementsRequest
+): Promise<PurchaseResult> {
+  return NativeBluesnap.showChoosePayment(request);
 }
 
-// export async function checkoutCard(
-//   props: checkoutCardProps
-// ): Promise<BSBaseSdkResult> {
-//   return await BluesnapSdkReactNative.checkoutCard(props);
-// }
+/**
+ * Charge a returning shopper with a saved payment method.
+ */
+export function showCreatePayment(
+  request: CheckoutRequest
+): Promise<PurchaseResult> {
+  return NativeBluesnap.showCreatePayment(request);
+}
+
+/**
+ * Submit card details using a custom UI (tokenization only).
+ */
+export function submitTokenizedDetails(
+  request: TokenizeCardRequest
+): Promise<Record<string, string>> {
+  return NativeBluesnap.submitTokenizedDetails(request);
+}
+
+/**
+ * Run 3D Secure authentication for custom UI flows.
+ */
+export function authenticate3DS(request: ThreeDSRequest): Promise<string> {
+  return NativeBluesnap.authenticate3DS(request);
+}
+
+/**
+ * Respond to a tax update event from the SDK (call from onTaxUpdate listener).
+ */
+export function respondToTaxUpdate(taxAmount: number): void {
+  NativeBluesnap.respondToTaxUpdate(taxAmount);
+}
+
+/**
+ * Get supported currency rates after initialization.
+ */
+export function getSupportedCurrencies(): Promise<string[]> {
+  return NativeBluesnap.getSupportedCurrencies();
+}
+
+/**
+ * Check Apple Pay availability (iOS only).
+ */
+export function applePaySupported(): Promise<ApplePaySupport> {
+  return NativeBluesnap.applePaySupported();
+}
+
+/**
+ * Get stored cards for a returning shopper (iOS only, after init with shopper token).
+ */
+export function getCards(): Promise<CreditCardInfo[]> {
+  return NativeBluesnap.getCards();
+}
+
+/**
+ * Get returning shopper configuration (Android only, after init with shopper token).
+ */
+export function getShopperConfiguration(): Promise<ShopperConfiguration | null> {
+  return NativeBluesnap.getShopperConfiguration();
+}
+
+/**
+ * Get native SDK version string for the current platform.
+ */
+export function getSdkVersion(): Promise<string> {
+  return NativeBluesnap.getSdkVersion();
+}
+
+/** Subscribe to SDK events (token refresh, tax updates). */
+export function addBluesnapListener<K extends keyof BluesnapEventMap>(
+  event: K,
+  listener: (payload: BluesnapEventMap[K]) => void
+): EmitterSubscription {
+  return eventEmitter.addListener(event, listener);
+}

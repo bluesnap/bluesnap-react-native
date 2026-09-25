@@ -3,16 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		225E54BF2A8F35C0005CE3D1 /* CheckoutCardProps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225E54BE2A8F3544005CE3D1 /* CheckoutCardProps.swift */; };
-		22E457492A8EA5CF00BE409D /* DataConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22593B832A60153E00E5CA0E /* DataConverter.swift */; };
-		22E4574A2A8F1E1F00BE409D /* AwaitLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222082582A5EDA3000106446 /* AwaitLock.swift */; };
-		59CE4AA82A5440860093738B /* BluesnapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 59CE4AA72A5440860093738B /* BluesnapSDK */; };
-		59CE4AAA2A5440860093738B /* KountWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 59CE4AA92A5440860093738B /* KountWrapper */; };
-		F4FF95D7245B92E800C19C63 /* BluesnapSdkReactNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* BluesnapSdkReactNative.swift */; };
+		5E555C0D2413F4C50049A1A2 /* BluesnapSdkReactNative.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* BluesnapSdkReactNative.m */; };
+		F4FF95D7245B92E800C19C63 /*  BluesnapSdkReactNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  BluesnapSdkReactNative.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,10 +25,6 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libBluesnapSdkReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBluesnapSdkReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		222082582A5EDA3000106446 /* AwaitLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwaitLock.swift; sourceTree = "<group>"; };
-		2243E8A32A5DB5FF002E3E62 /* DemoAPIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAPIHelper.swift; sourceTree = "<group>"; };
-		22593B832A60153E00E5CA0E /* DataConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConverter.swift; sourceTree = "<group>"; };
-		225E54BE2A8F3544005CE3D1 /* CheckoutCardProps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutCardProps.swift; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* BluesnapSdkReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluesnapSdkReactNative.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* BluesnapSdkReactNative-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BluesnapSdkReactNative-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* BluesnapSdkReactNative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluesnapSdkReactNative.swift; sourceTree = "<group>"; };
@@ -43,8 +35,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59CE4AAA2A5440860093738B /* KountWrapper in Frameworks */,
-				59CE4AA82A5440860093738B /* BluesnapSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,10 +52,6 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				225E54BE2A8F3544005CE3D1 /* CheckoutCardProps.swift */,
-				22593B832A60153E00E5CA0E /* DataConverter.swift */,
-				222082582A5EDA3000106446 /* AwaitLock.swift */,
-				2243E8A32A5DB5FF002E3E62 /* DemoAPIHelper.swift */,
 				F4FF95D6245B92E800C19C63 /* BluesnapSdkReactNative.swift */,
 				B3E7B5891CC2AC0600A0062D /* BluesnapSdkReactNative.m */,
 				F4FF95D5245B92E700C19C63 /* BluesnapSdkReactNative-Bridging-Header.h */,
@@ -89,10 +75,6 @@
 			dependencies = (
 			);
 			name = BluesnapSdkReactNative;
-			packageProductDependencies = (
-				59CE4AA72A5440860093738B /* BluesnapSDK */,
-				59CE4AA92A5440860093738B /* KountWrapper */,
-			);
 			productName = RCTDataManager;
 			productReference = 134814201AA4EA6300B7C361 /* libBluesnapSdkReactNative.a */;
 			productType = "com.apple.product-type.library.static";
@@ -120,9 +102,6 @@
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
-			packageReferences = (
-				59CE4AA62A5440860093738B /* XCRemoteSwiftPackageReference "bluesnap-ios" */,
-			);
 			productRefGroup = 58B511D21A9E6C8500147676;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,10 +116,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				225E54BF2A8F35C0005CE3D1 /* CheckoutCardProps.swift in Sources */,
-				22E4574A2A8F1E1F00BE409D /* AwaitLock.swift in Sources */,
-				22E457492A8EA5CF00BE409D /* DataConverter.swift in Sources */,
 				F4FF95D7245B92E800C19C63 /* BluesnapSdkReactNative.swift in Sources */,
+				B3E7B58A1CC2AC0600A0062D /* BluesnapSdkReactNative.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,7 +168,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -235,7 +212,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -301,30 +278,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		59CE4AA62A5440860093738B /* XCRemoteSwiftPackageReference "bluesnap-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/bluesnap/bluesnap-ios.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		59CE4AA72A5440860093738B /* BluesnapSDK */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 59CE4AA62A5440860093738B /* XCRemoteSwiftPackageReference "bluesnap-ios" */;
-			productName = BluesnapSDK;
-		};
-		59CE4AA92A5440860093738B /* KountWrapper */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 59CE4AA62A5440860093738B /* XCRemoteSwiftPackageReference "bluesnap-ios" */;
-			productName = KountWrapper;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 58B511D31A9E6C8500147676 /* Project object */;
 }

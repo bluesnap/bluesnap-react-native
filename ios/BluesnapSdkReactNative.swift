@@ -1,450 +1,580 @@
 import Foundation
-import PassKit
-import React
 import UIKit
+import PassKit
 import BluesnapSDK
 
-@available(iOS 13.0.0, *)
 @objc(BluesnapSdkReactNative)
 class BluesnapSdkReactNative: RCTEventEmitter {
-    fileprivate var thisbsToken: BSToken?
-    fileprivate var shouldInitKount = true
-    final fileprivate var shopperId : Int? = nil
-    final fileprivate var vaultedShopperId : String? = nil
-    final fileprivate var threeDSResult : String? = nil
-    var sdkre: BSSdkRequest?
-    var navptr: UINavigationController?
-    internal var currentPresenter: UIViewController?
-    private var purchaseLock: AwaitLock
-    
-    private var tokenGenerationLock: AwaitLock
-    
-    override func supportedEvents() -> [String]! {
-        return ["generateToken"]
-    }
-    
-    public override init() {
-        self.sdkre = nil
-        self.purchaseLock = AwaitLock()
-        self.tokenGenerationLock = AwaitLock()
-        
-        super.init()
-    }
-    
-    /**
-     Called by the BlueSnapSDK when token expired error is recognized.
-     Here we ask React Native to generate a new token, so that when the action re-tries, it will succeed.
-     */
-    func generateAndSetBsToken(completion: @escaping (_ token: BSToken?, _ error: BSErrors?) -> Void) {
-        NSLog("generateAndSetBSToken, Got BS token expiration notification!")
-        
-        // Send an event to React Native, asking it to generate a token.
-        sendEvent(withName: "generateToken", body: ["shopperID": shopperId])
-        
-        Task {
-            // Wait for the React Native token generator to call `finalizeToken`.
-            await self.tokenGenerationLock.startLock(timeoutSeconds: 3000)
+
+  private var purchaseResolve: RCTPromiseResolveBlock?
+  private var purchaseReject: RCTPromiseRejectBlock?
+  private var tokenRefreshCompletion: ((BSToken?, BSErrors?) -> Void)?
+  private var taxUpdateHandler: ((String, String?, BSPriceDetails) -> Void)?
+  private var presentedNavigationController: UINavigationController?
+
+  override static func requiresMainQueueSetup() -> Bool {
+    return true
+  }
+
+  override func supportedEvents() -> [String]! {
+    return ["onRequestNewToken", "onTaxUpdate"]
+  }
+
+  // MARK: - Initialization
+
+  @objc(initBluesnap:withResolver:withRejecter:)
+  func initBluesnap(
+    _ options: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+  DispatchQueue.main.async {
+      guard let tokenStr = options["token"] as? String else {
+        reject("INVALID_TOKEN", "token is required", nil)
+        return
+      }
+
+      let initKount = options["initKount"] as? Bool ?? true
+      let fraudSessionId = options["fraudSessionId"] as? String
+      let applePayMerchantId = options["applePayMerchantIdentifier"] as? String
+      let merchantStoreCurrency = options["merchantStoreCurrency"] as? String
+
+      do {
+        let bsToken = try BSToken(tokenStr: tokenStr)
+        try BlueSnapSDK.initBluesnap(
+          bsToken: bsToken,
+          generateTokenFunc: { [weak self] completion in
+            self?.tokenRefreshCompletion = completion
+            self?.sendEvent(withName: "onRequestNewToken", body: nil)
+          },
+          initKount: initKount,
+          fraudSessionId: fraudSessionId,
+          applePayMerchantIdentifier: applePayMerchantId,
+          merchantStoreCurrency: merchantStoreCurrency
+        ) { error in
+          if let error = error {
+            reject("INIT_FAILED", error.localizedDescription, nil)
+          } else {
+            resolve(nil)
+          }
         }
-        
-        Task {
-            // This will run after `finalizeToken` was called.
-            if let result = await self.tokenGenerationLock.awaitLock() as? BSToken {
-                completion(result, nil)
-            } else {
-                completion(nil, .unknown)
-            }
-        }
+      } catch {
+        reject("INIT_FAILED", error.localizedDescription, error)
+      }
     }
-    
-    
-    // This function shall only be called from React Native when the token generator finishes generating a token.
-    @objc
-    func finalizeToken(_ token: String?) -> Void {
-        if let token = token, let bsToken = try? BSToken(tokenStr: token) {
-            self.tokenGenerationLock.stopLock(withResult: bsToken)
+  }
+
+  @objc(setBsToken:withResolver:withRejecter:)
+  func setBsToken(
+    _ token: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    DispatchQueue.main.async {
+      do {
+        let bsToken = try BSToken(tokenStr: token)
+        try BlueSnapSDK.setBsToken(bsToken: bsToken)
+
+        if let completion = self.tokenRefreshCompletion {
+          self.tokenRefreshCompletion = nil
+          completion(bsToken, nil)
+        }
+        resolve(nil)
+      } catch {
+        if let completion = self.tokenRefreshCompletion {
+          self.tokenRefreshCompletion = nil
+          completion(nil, BSErrors.expiredToken)
+        }
+        reject("SET_TOKEN_FAILED", error.localizedDescription, error)
+      }
+    }
+  }
+
+  // MARK: - Checkout flows
+
+  @objc(showCheckout:withResolver:withRejecter:)
+  func showCheckout(
+    _ request: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    presentFlow(request: request, flow: .checkout, resolve: resolve, reject: reject)
+  }
+
+  @objc(showSubscriptionCheckout:withResolver:withRejecter:)
+  func showSubscriptionCheckout(
+    _ request: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    presentFlow(request: request, flow: .subscription, resolve: resolve, reject: reject)
+  }
+
+  @objc(showChoosePayment:withResolver:withRejecter:)
+  func showChoosePayment(
+    _ request: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    presentFlow(request: request, flow: .choosePayment, resolve: resolve, reject: reject)
+  }
+
+  @objc(showCreatePayment:withResolver:withRejecter:)
+  func showCreatePayment(
+    _ request: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    presentFlow(request: request, flow: .createPayment, resolve: resolve, reject: reject)
+  }
+
+  private enum CheckoutFlow {
+    case checkout, subscription, choosePayment, createPayment
+  }
+
+  private func presentFlow(
+    request: NSDictionary,
+    flow: CheckoutFlow,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    DispatchQueue.main.async {
+      self.purchaseResolve = resolve
+      self.purchaseReject = reject
+
+      guard let navController = self.resolveNavigationController() else {
+        reject("NO_NAVIGATION", "Unable to find a navigation controller to present checkout", nil)
+        self.clearPurchaseCallbacks()
+        return
+      }
+
+      do {
+        let sdkRequestBase = try self.buildSdkRequest(from: request, flow: flow)
+
+        switch flow {
+        case .checkout, .subscription:
+          try BlueSnapSDK.showCheckoutScreen(
+            inNavigationController: navController,
+            animated: true,
+            sdkRequest: sdkRequestBase as! BSSdkRequest
+          )
+        case .choosePayment:
+          try BlueSnapSDK.showChoosePaymentScreen(
+            inNavigationController: navController,
+            animated: true,
+            sdkRequestShopperRequirements: sdkRequestBase as! BSSdkRequestShopperRequirements
+          )
+        case .createPayment:
+          try BlueSnapSDK.showCreatePaymentScreen(
+            inNavigationController: navController,
+            animated: true,
+            sdkRequest: sdkRequestBase as! BSSdkRequest
+          )
+        }
+      } catch {
+        reject("CHECKOUT_FAILED", error.localizedDescription, error)
+        self.clearPurchaseCallbacks()
+      }
+    }
+  }
+
+  private func buildSdkRequest(from request: NSDictionary, flow: CheckoutFlow) throws -> BSSdkRequestProtocol {
+    let emailRequired = request["emailRequired"] as? Bool ?? false
+    let shippingRequired = request["shippingRequired"] as? Bool ?? false
+    let billingRequired = request["billingRequired"] as? Bool ?? false
+    let billingDetails = RnSdkMapper.billingDetails(from: request["billingDetails"] as? NSDictionary)
+    let shippingDetails = RnSdkMapper.shippingDetails(from: request["shippingDetails"] as? NSDictionary)
+
+    let purchaseFunc: (BSBaseSdkResult?) -> Void = { [weak self] result in
+      guard let self = self else { return }
+      DispatchQueue.main.async {
+        if let result = result {
+          self.purchaseResolve?(RnSdkMapper.purchaseResult(from: result))
         } else {
-            self.tokenGenerationLock.stopLock(withResult: token as NSString?)
+          self.purchaseReject?("PURCHASE_CANCELLED", "Checkout was cancelled", nil)
         }
+        self.clearPurchaseCallbacks()
+        self.dismissPresentedNavigationIfNeeded()
+      }
     }
-    
-    private func completePurchase(purchaseDetails: BSBaseSdkResult!) {
-        NSLog("ChosenPaymentMethodType: \(String(describing: purchaseDetails?.getCurrency()))")
-        
-        self.purchaseLock.stopLock(withResult: purchaseDetails);
-    }
-    
-    func updateTax(_ shippingCountry: String,
-                   _ shippingState: String?,
-                   _ priceDetails: BSPriceDetails) -> Void {}
-    
-    @objc
-    func setSDKRequest(_ withEmail: Bool,
-                       withShipping: Bool,
-                       fullBilling: Bool,
-                       amount: Double,
-                       taxAmount: Double,
-                       currency: String,
-                       activate3DS: Bool
-    ) -> Void {
-        self.sdkre = BSSdkRequest(withEmail: withEmail, withShipping: withShipping, fullBilling: fullBilling, priceDetails: BSPriceDetails(amount: amount, taxAmount: taxAmount, currency: currency), billingDetails: nil, shippingDetails: nil, purchaseFunc: completePurchase, updateTaxFunc: updateTax)
-        
-        self.sdkre?.activate3DS = activate3DS
-    }
-    
-    @objc
-    func initBluesnap(_ bsToken: String!,
-                      initKount: Bool,
-                      fraudSessionId: String?,
-                      applePayMerchantIdentifier: String?,
-                      merchantStoreCurrency: String?,
-                      
-                      resolver resolve: @escaping RCTPromiseResolveBlock,
-                      rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        // Your implementation here
-        print("initBluesnap")
-        
-        NSLog("initBluesnap, start")
-        let semaphore = DispatchSemaphore(value: 0)
 
-        do {
-            generateAndSetBsToken { resultToken, errors in
-                self.thisbsToken = resultToken;
-                NSLog("initBluesnap, generateAndSetBsToken")
-                do {
-                    try BlueSnapSDK.initBluesnap(
-                        bsToken: self.thisbsToken,
-                        generateTokenFunc: self.generateAndSetBsToken,
-                        initKount: self.shouldInitKount,
-                        fraudSessionId: nil,
-                        applePayMerchantIdentifier: applePayMerchantIdentifier,
-                        merchantStoreCurrency: merchantStoreCurrency,
-                        completion: { error in
-                            if let error = error {
-                                NSLog("initBluesnap, error: \(error.description())")
-                                reject("error_code", "Error description", NSError(domain: "", code: 200, userInfo: nil))
-                                
-                            } else {
-                                NSLog("initBluesnap, Done")
-                                
-                                resolve("Success")
-                            }
-                        })
-                    NSLog("initBluesnap, BlueSnapSDK initted blueSnap")
-                } catch {
-                    NSLog("initBluesnap, Unexpected error: \(error).")
-                    reject("error_code", "Error description", NSError(domain: "", code: 200, userInfo: nil))
-                }
-            }
+    let updateTaxFunc: ((String, String?, BSPriceDetails) -> Void)? = shippingRequired
+      ? { [weak self] country, state, priceDetails in
+          self?.taxUpdateHandler = { _, _, details in
+            details.taxAmount = NSNumber(value: details.taxAmount.doubleValue)
+          }
+          self?.sendEvent(
+            withName: "onTaxUpdate",
+            body: [
+              "country": country,
+              "state": state as Any,
+              "amount": priceDetails.amount.doubleValue,
+              "taxAmount": priceDetails.taxAmount.doubleValue,
+              "currency": priceDetails.currency ?? "USD",
+            ]
+          )
+          // Store priceDetails reference for respondToTaxUpdate
+          self?.pendingTaxPriceDetails = priceDetails
         }
-        
-        // If there was an error, call reject
-        // For example:
-        // reject("error_code", "Error description", NSError(domain: "", code: 200, userInfo: nil))
-    }
-    func getTopMostViewController() -> UIViewController? {
-        if var topController = UIApplication.shared.keyWindow?.rootViewController {
-            while let presentedViewController = topController.presentedViewController {
-                topController = presentedViewController
-            }
-            return topController
-        }
-        return nil
-    }
+      : nil
 
+    switch flow {
+    case .checkout, .createPayment:
+      let amount = request["amount"] as? Double ?? 0
+      let taxAmount = request["taxAmount"] as? Double ?? 0
+      let currency = request["currency"] as? String ?? "USD"
+      let priceDetails = BSPriceDetails(amount: amount, taxAmount: taxAmount, currency: currency)
 
-    @objc
-    func showCheckout(_ resolve: @escaping RCTPromiseResolveBlock,
-        rejecter reject: @escaping RCTPromiseRejectBlock
-    ) -> Void {
-        NSLog("Show Checkout Screen")
-        Task { await self.purchaseLock.startLock(timeoutSeconds: 3000); }
-        DispatchQueue.main.async {
-            do {
-                NSLog("Show Checkout Screen1\(self.sdkre)")
-                NSLog("Show Checkout Screen2\(UIViewController.uiNavigationController)")
+      let sdkRequest = BSSdkRequest(
+        withEmail: emailRequired,
+        withShipping: shippingRequired,
+        fullBilling: billingRequired,
+        priceDetails: priceDetails,
+        billingDetails: billingDetails,
+        shippingDetails: shippingDetails,
+        purchaseFunc: purchaseFunc,
+        updateTaxFunc: updateTaxFunc
+      )
+      sdkRequest.allowCurrencyChange = request["allowCurrencyChange"] as? Bool ?? true
+      sdkRequest.hideStoreCardSwitch = request["hideStoreCardSwitch"] as? Bool ?? false
+      sdkRequest.activate3DS = request["activate3DS"] as? Bool ?? false
+      return sdkRequest
 
-                if let viewController = UIViewController.uiNavigationController, let sdk = self.sdkre {
-                    try BlueSnapSDK.showCheckoutScreen(inNavigationController: viewController ,
-                                                           animated: true,
-                                                           sdkRequest: sdk)
-                } else {
-                    var errorMsg = "Unknown error"
-                    if (UIViewController.uiNavigationController == nil) {
-                        errorMsg = "Unable to get viewController"
-                    } else if (self.sdkre == nil) {
-                        errorMsg = "SDK not init properly"
-                    }
-                    NSLog(errorMsg)
-                }
-            } catch {
-                NSLog("Unexpected error: \(error).")
-            }
-        }
-        Task {
-            if let result = await self.purchaseLock.awaitLock() as? BSBaseSdkResult {
-                let dictionary = DataConverter.convertBSBaseSdkResultToNSDictionary(obj: result);
-                resolve(dictionary);
-            } else {
-                reject(
-                    "error_code",
-                    "Error description",
-                    NSError(domain: "", code: 200, userInfo: nil)
-                );
-            }
-            
-        }
-    }
+    case .subscription:
+      let showMessage = request["showSubscriptionCancellationMessage"] as? Bool ?? false
+      let message = request["subscriptionCancellationMessage"] as? String
 
-    func getCurrentYear() -> Int! {
-        let date = Date()
-        let calendar = Calendar(identifier: .gregorian)
-        let year = calendar.component(.year, from: date)
-        return year
-    }
-    
-    public func getExpDateAsMMYYYY(value: String) -> String! {
-        let newValue = value
-        if let p = newValue.firstIndex(of: "/") {
-            let mm = newValue[..<p]
-            let yy = BSStringUtils.removeNoneDigits(String(newValue[p..<newValue.endIndex]))
-            let currentYearStr = String(getCurrentYear())
-            let p1 = currentYearStr.index(currentYearStr.startIndex, offsetBy: 2)
-            let first2Digits = currentYearStr[..<p1]
-            return "\(mm)/\(first2Digits)\(yy)"
-        }
-        return ""
-    }
-    
-    /**
-    *
-    */
-    public func submitPaymentFields(
-        ccn: String,
-        cvv: String,
-        exp: String,
-        purchaseDetails: BSCcSdkResult?,
-        resolve: @escaping RCTPromiseResolveBlock,
-        rejecter reject: @escaping RCTPromiseRejectBlock
-    ) {
-        BlueSnapSDK.sdkRequestBase = sdkre
-        
-        let formattedEXP = getExpDateAsMMYYYY(value: exp)
-        
-        BSApiManager.submitPurchaseDetails(
-            ccNumber: ccn,
-            expDate: formattedEXP,
-            cvv: cvv,
-            last4Digits: nil,
-            cardType: nil, 
-            billingDetails: purchaseDetails?.billingDetails,
-            shippingDetails: purchaseDetails?.shippingDetails,
-            storeCard: purchaseDetails?.storeCard,
-            fraudSessionId: BlueSnapSDK.fraudSessionId,
-            completion: { creditCard, error in
-
-                //exp = getExpDateAsMMYYYY(value: exp)
-                if let error = error {
-                    if (error == .invalidCcNumber) {
-                        reject(
-                            "error_code",
-                            BSValidator.ccnInvalidMessage,
-                            NSError(domain: "", code: 200, userInfo: nil)
-                        );
-                    } else if (error == .invalidExpDate) {
-                        reject(
-                            "error_code",
-                            BSValidator.expInvalidMessage,
-                            NSError(domain: "", code: 200, userInfo: nil)
-                        );
-                    } else if (error == .invalidCvv) {
-                        reject(
-                            "error_code",
-                            BSValidator.cvvInvalidMessage,
-                            NSError(domain: "", code: 200, userInfo: nil)
-                        );
-                    } else if (error == .expiredToken) {
-                        let message = "An error occurred. Please try again."
-                        reject(
-                            "error_code",
-                            message,
-                            NSError(domain: "", code: 200, userInfo: nil)
-                        );
-                    } else if (error == .tokenNotFound) {
-                        let message = "An error occurred. Please try again."
-                        reject(
-                            "error_code",
-                            message,
-                            NSError(domain: "", code: 200, userInfo: nil)
-                        );
-                    } else {
-                        NSLog("Unexpected error submitting Payment Fields to BS")
-                        let message = "An error occurred. Please try again."
-                        reject(
-                            "error_code",
-                            message,
-                            NSError(domain: "", code: 200, userInfo: nil)
-                        );
-                    }
-                }
-
-                defer {
-                    if let purchaseDetailsR = purchaseDetails {
-                        if (BlueSnapSDK.sdkRequestBase?.activate3DS ?? false) {
-                            // cardinalCompletion(ccn, creditCard, error)
-                            BSCardinalManager.instance.authWith3DS(
-                                currency: purchaseDetailsR.getCurrency(),
-                                amount: String(purchaseDetailsR.getAmount()),
-                                creditCardNumber: ccn,
-                                    { cardinalResult, error2 in
-                                                                        
-                                        if (cardinalResult == ThreeDSManagerResponse.AUTHENTICATION_CANCELED.rawValue) { // cardinal challenge canceled
-                                            NSLog(BSLocalizedStrings.getString(BSLocalizedString.Three_DS_Authentication_Required_Error))
-                                            let message = BSLocalizedStrings.getString(BSLocalizedString.Three_DS_Authentication_Required_Error)
-                                            reject(
-                                                "error_code",
-                                                message,
-                                                NSError(domain: "", code: 200, userInfo: nil)
-                                            );
-                                            
-                                        } else if (cardinalResult == ThreeDSManagerResponse.THREE_DS_ERROR.rawValue) { // server or cardinal internal error
-                                            NSLog("Unexpected BS server error in 3DS authentication; error: \(error2)")
-                                            let message = BSLocalizedStrings.getString(BSLocalizedString.Error_Three_DS_Authentication_Error) + "\n" + (error2?.description() ?? "")
-                                            reject(
-                                                "error_code",
-                                                message,
-                                                NSError(domain: "", code: 200, userInfo: nil)
-                                            );
-                                            
-                                        } else if (cardinalResult == ThreeDSManagerResponse.AUTHENTICATION_FAILED.rawValue) { // authentication failure
-                                            DispatchQueue.main.async {
-                                                self.didSubmitCreditCard(purchaseDetails: purchaseDetails,creditCard: creditCard, error: error, resolve: resolve, rejecter: reject)
-                                            }
-                                            
-                                        } else { // cardinal success (success/bypass/unavailable/unsupported)
-                                            DispatchQueue.main.async {
-                                                self.didSubmitCreditCard(
-                                                    purchaseDetails: purchaseDetailsR,
-                                                    creditCard: creditCard,
-                                                    error: error,
-                                                    resolve: resolve,
-                                                    rejecter: reject
-                                                )
-                                            }
-                                        }
-                                        
-                                    }
-                            )
-                            
-                        } else {
-                            DispatchQueue.main.async {
-                                self.didSubmitCreditCard(
-                                    purchaseDetails: purchaseDetailsR,
-                                    creditCard: creditCard,
-                                    error: error,
-                                    resolve: resolve,
-                                    rejecter: reject
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+      if let amount = request["amount"] as? Double {
+        let taxAmount = request["taxAmount"] as? Double ?? 0
+        let currency = request["currency"] as? String ?? "USD"
+        let priceDetails = BSPriceDetails(amount: amount, taxAmount: taxAmount, currency: currency)
+        let sdkRequest = BSSdkRequestSubscriptionCharge(
+          withEmail: emailRequired,
+          withShipping: shippingRequired,
+          fullBilling: billingRequired,
+          priceDetails: priceDetails,
+          billingDetails: billingDetails,
+          shippingDetails: shippingDetails,
+          purchaseFunc: purchaseFunc,
+          updateTaxFunc: updateTaxFunc,
+          subscriptionCancellationMessage: message,
+          showSubscriptionCancellationMessage: showMessage
         )
+        sdkRequest.allowCurrencyChange = request["allowCurrencyChange"] as? Bool ?? true
+        sdkRequest.hideStoreCardSwitch = request["hideStoreCardSwitch"] as? Bool ?? false
+        sdkRequest.activate3DS = request["activate3DS"] as? Bool ?? false
+        return sdkRequest
+      }
+
+      let sdkRequest = BSSdkRequestSubscriptionCharge(
+        withEmail: emailRequired,
+        withShipping: shippingRequired,
+        fullBilling: billingRequired,
+        billingDetails: billingDetails,
+        shippingDetails: shippingDetails,
+        purchaseFunc: purchaseFunc,
+        subscriptionCancellationMessage: message,
+        showSubscriptionCancellationMessage: showMessage
+      )
+      sdkRequest.allowCurrencyChange = request["allowCurrencyChange"] as? Bool ?? true
+      sdkRequest.hideStoreCardSwitch = request["hideStoreCardSwitch"] as? Bool ?? false
+      sdkRequest.activate3DS = request["activate3DS"] as? Bool ?? false
+      return sdkRequest
+
+    case .choosePayment:
+      return BSSdkRequestShopperRequirements(
+        withEmail: emailRequired,
+        withShipping: shippingRequired,
+        fullBilling: billingRequired,
+        billingDetails: billingDetails,
+        shippingDetails: shippingDetails,
+        purchaseFunc: purchaseFunc
+      )
+    }
+  }
+
+  private var pendingTaxPriceDetails: BSPriceDetails?
+
+  @objc(respondToTaxUpdate:)
+  func respondToTaxUpdate(_ taxAmount: Double) {
+    pendingTaxPriceDetails?.taxAmount = NSNumber(value: taxAmount)
+    pendingTaxPriceDetails = nil
+  }
+
+  // MARK: - Custom UI
+
+  @objc(submitTokenizedDetails:withResolver:withRejecter:)
+  func submitTokenizedDetails(
+    _ request: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let card = request["card"] as? NSDictionary else {
+      reject("INVALID_REQUEST", "card is required", nil)
+      return
     }
 
-    func didSubmitCreditCard(
-        purchaseDetails: BSCcSdkResult?,
-        creditCard: BSCreditCard,
-        error: BSErrors?,
-        resolve: @escaping RCTPromiseResolveBlock,
-        rejecter reject: @escaping RCTPromiseRejectBlock
-    ) {
-        if let result = purchaseDetails {
-            if let errorR = error {
-                reject(
-                    "error_code",
-                    errorR.description(),
-                    NSError(domain: "", code: 200, userInfo: nil)
-                );
-            } else {
-                result.creditCard = creditCard
-                result.threeDSAuthenticationResult = BSCardinalManager.instance.getThreeDSAuthResult()
-                // execute callback
-                BlueSnapSDK.sdkRequestBase?.purchaseFunc(result)
-                
-                let dictionary = DataConverter.convertBSBaseSdkResultToNSDictionary(obj: result);
-                resolve(dictionary);
-            }
-            
-        } else {
-            reject(
-                "error_code",
-                "Payment result empty",
-                NSError(domain: "", code: 200, userInfo: nil)
-            );
-        }
+    let ccDetails = BSTokenizeNewCCDetails(
+      ccNumber: card["cardNumber"] as? String,
+      cvv: card["cvv"] as? String,
+      ccType: "",
+      expDate: RnSdkMapper.expirationDate(
+        month: card["expirationMonth"] as? String,
+        year: card["expirationYear"] as? String
+      )
+    )
+
+    let tokenizeRequest = BSTokenizeRequest()
+    tokenizeRequest.paymentDetails = ccDetails
+    tokenizeRequest.billingDetails = RnSdkMapper.billingDetails(from: request["billing"] as? NSDictionary)
+    tokenizeRequest.shippingDetails = RnSdkMapper.shippingDetails(from: request["shipping"] as? NSDictionary)
+    tokenizeRequest.storeCard = request["storeCard"] as? Bool ?? false
+
+    BlueSnapSDK.submitTokenizedDetails(tokenizeRequest: tokenizeRequest) { result, error in
+      if let error = error {
+        reject("TOKENIZE_FAILED", error.localizedDescription, nil)
+      } else {
+        resolve(result ?? [:])
+      }
     }
-    
-    @objc
-    func checkoutCard(_ props: NSDictionary,
-        resolve: @escaping RCTPromiseResolveBlock,
-        rejecter reject: @escaping RCTPromiseRejectBlock
-    ) -> Void {
-        var checkoutProps = DataConverter.toCheckoutCardProps(dict: props);
-        NSLog("checkoutCard start for card \(checkoutProps.cardNumber)")
-       if let request = self.sdkre {
-            request.shopperConfiguration.billingDetails?.name = checkoutProps.name;
-            request.shopperConfiguration.billingDetails?.zip = checkoutProps.billingZip;
-            request.shopperConfiguration.billingDetails?.email = checkoutProps.email;
-           
-           let purchaseDetails = BSCcSdkResult(sdkRequestBase: request)
-           submitPaymentFields(
-               ccn: checkoutProps.cardNumber,
-               cvv: checkoutProps.cvv,
-               exp: checkoutProps.expirationDate,
-               purchaseDetails: purchaseDetails,
-               resolve: resolve,
-               rejecter: reject
-           )
-       } else {
-           reject(
-               "error_code",
-               "Invalid request",
-               NSError(domain: "", code: 200, userInfo: nil)
-           )
-       }
+  }
+
+  @objc(authenticate3DS:withResolver:withRejecter:)
+  func authenticate3DS(
+    _ request: NSDictionary,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) {
+    let currency = request["currency"] as? String ?? "USD"
+    let amount = request["amount"] as? String ?? "0"
+    let cardNumber = request["creditCardNumber"] as? String
+
+    BlueSnapSDK.authenticationWith3DS(
+      currency: currency,
+      amount: amount,
+      creditCardNumber: cardNumber
+    ) { result, error in
+      if let error = error {
+        reject("THREE_DS_FAILED", error.localizedDescription, nil)
+      } else {
+        resolve(result)
+      }
     }
+  }
+
+  // MARK: - Utilities
+
+  @objc(getSupportedCurrencies:withRejecter:)
+  func getSupportedCurrencies(
+    resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    resolve(RnSdkMapper.supportedCurrencyCodes(from: BlueSnapSDK.getCurrencyRates()))
+  }
+
+  @objc(applePaySupported:withRejecter:)
+  func applePaySupported(
+    resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    let networks: [PKPaymentNetwork] = [.amex, .discover, .masterCard, .visa]
+    let support = BlueSnapSDK.applePaySupported(
+      supportedPaymentMethods: nil,
+      supportedNetworks: networks
+    )
+    resolve([
+      "canMakePayments": support.canMakePayments,
+      "canSetupCards": support.canSetupCards,
+    ])
+  }
+
+  @objc(getCards:withRejecter:)
+  func getCards(
+    resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    let cards = BlueSnapSDK.getCards()
+    resolve(RnSdkMapper.creditCards(from: cards))
+  }
+
+  @objc(getShopperConfiguration:withRejecter:)
+  func getShopperConfiguration(
+    resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    resolve(NSNull())
+  }
+
+  @objc(getSdkVersion:withRejecter:)
+  func getSdkVersion(
+    resolve: RCTPromiseResolveBlock,
+    reject: RCTPromiseRejectBlock
+  ) {
+    resolve("2.2.0")
+  }
+
+  // MARK: - Navigation helpers
+
+  private func resolveNavigationController() -> UINavigationController? {
+    guard let rootVC = RnNavigationHelper.topViewController() else { return nil }
+
+    if let nav = rootVC.navigationController {
+      return nav
+    }
+
+    let nav = UINavigationController(rootViewController: UIViewController())
+    nav.modalPresentationStyle = .fullScreen
+    nav.isNavigationBarHidden = true
+    rootVC.present(nav, animated: true)
+    presentedNavigationController = nav
+    return nav
+  }
+
+  private func dismissPresentedNavigationIfNeeded() {
+    presentedNavigationController?.dismiss(animated: true)
+    presentedNavigationController = nil
+  }
+
+  private func clearPurchaseCallbacks() {
+    purchaseResolve = nil
+    purchaseReject = nil
+  }
 }
 
-extension UIView {
-    var parentViewController: UIViewController? {
-        var nextResponder: UIResponder? = self
-        while nextResponder != nil {
-            nextResponder = nextResponder?.next
-            if let viewController = nextResponder as? UIViewController {
-                return viewController
-            }
-        }
-        return nil
+// MARK: - Mapper
+
+private enum RnSdkMapper {
+  static let commonCurrencyCodes = [
+    "USD", "EUR", "GBP", "CAD", "AUD", "ILS", "JPY", "CHF", "SEK", "NOK", "DKK", "NZD", "SGD", "HKD",
+  ]
+
+  static func billingDetails(from dict: NSDictionary?) -> BSBillingAddressDetails? {
+    guard let dict = dict else { return nil }
+    return BSBillingAddressDetails(
+      email: dict["email"] as? String,
+      name: dict["name"] as? String,
+      address: dict["address"] as? String,
+      city: dict["city"] as? String,
+      zip: dict["zip"] as? String,
+      country: dict["country"] as? String,
+      state: dict["state"] as? String
+    )
+  }
+
+  static func shippingDetails(from dict: NSDictionary?) -> BSShippingAddressDetails? {
+    guard let dict = dict else { return nil }
+    return BSShippingAddressDetails(
+      name: dict["name"] as? String,
+      address: dict["address"] as? String,
+      city: dict["city"] as? String,
+      zip: dict["zip"] as? String,
+      country: dict["country"] as? String,
+      state: dict["state"] as? String
+    )
+  }
+
+  static func supportedCurrencyCodes(from currencies: BSCurrencies?) -> [String] {
+    guard let currencies = currencies else { return [] }
+    return commonCurrencyCodes.filter { currencies.getCurrencyByCode(code: $0) != nil }
+  }
+
+  static func expirationDate(month: String?, year: String?) -> String {
+    guard let month = month, let year = year else { return "" }
+    return "\(month)/\(year)"
+  }
+
+  static func purchaseResult(from result: BSBaseSdkResult) -> [String: Any] {
+    var map: [String: Any] = [
+      "fraudSessionId": result.getFraudSessionId() as Any,
+      "isShopperRequirements": result.isShopperRequirements(),
+      "isSubscriptionCharge": result.isSubscriptionCharge(),
+    ]
+
+    if result.hasPriceDetails() {
+      map["amount"] = result.getAmount() as Any
+      map["taxAmount"] = result.getTaxAmount() as Any
+      map["currency"] = result.getCurrency() as Any
     }
+
+    if let paymentType = result.getChosenPaymentMethodType() {
+      map["paymentType"] = paymentType.rawValue
+    }
+
+    if let ccResult = result as? BSCcSdkResult {
+      map["last4Digits"] = ccResult.creditCard.last4Digits as Any
+      map["cardType"] = ccResult.creditCard.ccType as Any
+      map["issuingCountry"] = ccResult.creditCard.ccIssuingCountry as Any
+      map["threeDSAuthenticationResult"] = ccResult.threeDSAuthenticationResult as Any
+      map["storeCard"] = ccResult.storeCard as Any
+      if let billing = ccResult.getBillingDetails() {
+        map["billingDetails"] = addressMap(from: billing)
+      }
+      if let shipping = ccResult.getShippingDetails() {
+        map["shippingDetails"] = shippingMap(from: shipping)
+      }
+    }
+
+    if let paypalResult = result as? BSPayPalSdkResult {
+      map["payPalInvoiceId"] = paypalResult.payPalInvoiceId as Any
+    }
+
+    return map
+  }
+
+  static func addressMap(from billing: BSBillingAddressDetails) -> [String: Any?] {
+    [
+      "email": billing.email,
+      "name": billing.name,
+      "address": billing.address,
+      "city": billing.city,
+      "zip": billing.zip,
+      "country": billing.country,
+      "state": billing.state,
+    ]
+  }
+
+  static func shippingMap(from shipping: BSShippingAddressDetails) -> [String: Any?] {
+    [
+      "name": shipping.name,
+      "address": shipping.address,
+      "city": shipping.city,
+      "zip": shipping.zip,
+      "country": shipping.country,
+      "state": shipping.state,
+    ]
+  }
+
+  static func creditCards(from cards: [BSCreditCard]?) -> [[String: Any?]] {
+    guard let cards = cards else { return [] }
+    return cards.map { card in
+      [
+        "last4Digits": card.last4Digits,
+        "cardType": card.ccType,
+        "expirationMonth": card.expirationMonth,
+        "expirationYear": card.expirationYear,
+        "issuingCountry": card.ccIssuingCountry,
+      ]
+    }
+  }
 }
 
-extension UIViewController {
-    internal static var topPresenter: UIViewController? {
-        var topController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
-        
-        while let presenter = topController?.presentedViewController {
-            topController = presenter
-        }
-        return topController
-    }
-    
-    internal static var uiNavigationController: UINavigationController? {
-        let view = UIApplication.shared.delegate?.window?!.rootViewController
-        if let viewController = view as? UINavigationController {
-            return viewController
-        }
-        return nil
-    }
-}
+// MARK: - Navigation helper
 
+private enum RnNavigationHelper {
+  static func topViewController(
+    base: UIViewController? = UIApplication.shared.connectedScenes
+      .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+      .first?.rootViewController
+  ) -> UIViewController? {
+    if let nav = base as? UINavigationController {
+      return topViewController(base: nav.visibleViewController)
+    }
+    if let tab = base as? UITabBarController, let selected = tab.selectedViewController {
+      return topViewController(base: selected)
+    }
+    if let presented = base?.presentedViewController {
+      return topViewController(base: presented)
+    }
+    return base
+  }
+}
