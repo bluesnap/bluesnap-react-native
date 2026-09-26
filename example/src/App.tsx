@@ -9,6 +9,7 @@ import {
   showCheckout,
   type PurchaseResult,
 } from 'bluesnap-sdk-react-native';
+import SelfTestScreen from './SelfTestScreen';
 
 /**
  * Example integration. Replace MERCHANT_TOKEN with a token from your server:
@@ -22,6 +23,7 @@ export default function App() {
   const [lastResult, setLastResult] = React.useState<PurchaseResult | null>(
     null
   );
+  const [selfTest, setSelfTest] = React.useState(false);
 
   React.useEffect(() => {
     getSdkVersion().then((version) => {
@@ -79,6 +81,10 @@ export default function App() {
     }
   };
 
+  if (selfTest) {
+    return <SelfTestScreen />;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>BlueSnap React Native</Text>
@@ -87,6 +93,12 @@ export default function App() {
       <Button title="Initialize SDK" onPress={initialize} />
       <View style={styles.spacer} />
       <Button title="Show Checkout" onPress={startCheckout} />
+      <View style={styles.spacer} />
+      <Button
+        testID="open-selftest"
+        title="Bridge self-test"
+        onPress={() => setSelfTest(true)}
+      />
       {lastResult ? (
         <Text style={styles.result}>{JSON.stringify(lastResult, null, 2)}</Text>
       ) : null}

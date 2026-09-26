@@ -1,0 +1,25 @@
+# End-to-end bridge self-test (see e2e/README.md).
+# Run with scripts/e2e/run-self-test.sh ios|android, which passes APP_ID and a
+# fresh sandbox BS_TOKEN. The app must already be installed on a booted
+# simulator/emulator with a release (or Metro-served) JS bundle.
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "open-selftest"
+- tapOn:
+    id: "selftest-token"
+- inputText: ${BS_TOKEN}
+- hideKeyboard
+- tapOn:
+    id: "selftest-run"
+# init + tokenization go to the BlueSnap sandbox; each step times out at 30 s
+- extendedWaitUntil:
+    visible:
+      id: "selftest-result"
+    timeout: 180000
+- takeScreenshot: bridge-self-test
+- assertVisible:
+    id: "selftest-result"
+    text: "PASS"

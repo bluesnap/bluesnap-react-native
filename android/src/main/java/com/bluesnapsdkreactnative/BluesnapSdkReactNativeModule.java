@@ -191,7 +191,7 @@ public class BluesnapSdkReactNativeModule extends ReactContextBaseJavaModule
 
     CreditCard creditCard = new CreditCard();
     creditCard.setNumber(card.getString("cardNumber"));
-    creditCard.setCvv(card.getString("cvv"));
+    creditCard.setCvc(card.getString("cvv"));
     creditCard.setExpDateFromString(
         card.getString("expirationMonth") + "/" + card.getString("expirationYear")
     );
@@ -302,7 +302,7 @@ public class BluesnapSdkReactNativeModule extends ReactContextBaseJavaModule
 
   @ReactMethod
   public void getSdkVersion(Promise promise) {
-    promise.resolve("2.5.1");
+    promise.resolve("2.7.3");
   }
 
   @Override

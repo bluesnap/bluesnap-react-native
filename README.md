@@ -5,7 +5,7 @@ React Native bridge for the BlueSnap iOS and Android native SDKs.
 | Platform | Native SDK | Version |
 |----------|-----------|---------|
 | iOS | [bluesnap-ios](https://github.com/bluesnap/bluesnap-ios) | 2.2.0 |
-| Android | [bluesnap-android](https://github.com/bluesnap/bluesnap-android) | 2.5.1 |
+| Android | [bluesnap-android](https://github.com/bluesnap/bluesnap-android) | 2.7.3 |
 
 ## Requirements
 
@@ -44,6 +44,8 @@ allprojects {
 ```
 
 Set `minSdkVersion` to at least **29** in your app.
+
+Build Android with **JDK 17 or newer** (the JDK Android Gradle Plugin 8+ requires). bluesnap-android 2.7.3 targets Java 17; 2.6.0 through 2.7.2 targeted Java 19 and needed JDK 19 and Jetifier off, which is no longer the case.
 
 ## Usage
 
@@ -130,6 +132,10 @@ const result = await showCheckout({
 |-------|------|
 | `onRequestNewToken` | SDK needs a fresh payment-fields token |
 | `onTaxUpdate` | Shipping changed; app should call `respondToTaxUpdate` |
+
+## Testing
+
+`yarn test` runs the JS unit tests and a bridge contract test that checks the JS layer, the iOS module and the Android module agree on methods, events and native SDK versions. CI also compiles the Android bridge against the pinned SDK. For a real end-to-end run on a simulator or emulator, see [e2e/README.md](e2e/README.md).
 
 ## License
 
