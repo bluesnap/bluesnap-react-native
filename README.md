@@ -5,7 +5,7 @@ React Native bridge for the BlueSnap iOS and Android native SDKs.
 | Platform | Native SDK | Version |
 |----------|-----------|---------|
 | iOS | [bluesnap-ios](https://github.com/bluesnap/bluesnap-ios) | 2.2.0 |
-| Android | [bluesnap-android](https://github.com/bluesnap/bluesnap-android) | 2.7.3 |
+| Android | [bluesnap-android](https://github.com/bluesnap/bluesnap-android) | 2.8.1 |
 
 ## Requirements
 
@@ -45,7 +45,7 @@ allprojects {
 
 Set `minSdkVersion` to at least **29** in your app.
 
-Build Android with **JDK 17 or newer** (the JDK Android Gradle Plugin 8+ requires). bluesnap-android 2.7.3 targets Java 17; 2.6.0 through 2.7.2 targeted Java 19 and needed JDK 19 and Jetifier off, which is no longer the case.
+Build Android with **JDK 17 or newer** (the JDK Android Gradle Plugin 8+ requires). bluesnap-android 2.8.1 targets Java 17.
 
 ## Usage
 

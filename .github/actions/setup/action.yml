@@ -9,6 +9,14 @@ runs:
       with:
         node-version-file: .nvmrc
 
+    # Self-hosted runners have no global yarn. Corepack ships with Node and
+    # provides the yarn version pinned in package.json ("packageManager").
+    - name: Enable Corepack
+      run: |
+        corepack enable
+        echo "COREPACK_ENABLE_DOWNLOAD_PROMPT=0" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Cache dependencies
       id: yarn-cache
       uses: actions/cache@v3

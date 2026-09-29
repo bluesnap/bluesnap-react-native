@@ -302,7 +302,7 @@ public class BluesnapSdkReactNativeModule extends ReactContextBaseJavaModule
 
   @ReactMethod
   public void getSdkVersion(Promise promise) {
-    promise.resolve("2.7.3");
+    promise.resolve("2.8.1");
   }
 
   @Override
